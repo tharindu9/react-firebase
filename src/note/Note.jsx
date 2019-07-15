@@ -1,6 +1,7 @@
 import React , {Component} from 'react';
 import PropTypes from 'prop-types';
-import './note.css';
+import './Note.css';
+import NoteForm from '../noteForm/NoteForm'
 
 
 class Note extends Component {
@@ -9,6 +10,13 @@ class Note extends Component {
         super(props);
         this.noteContent = props.noteContent;
         this.noteId = props.noteId;
+
+        this.state = {
+        }
+    }
+
+    addNoteContent(){
+        
     }
 
     render(props){
