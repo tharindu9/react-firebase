@@ -1,6 +1,8 @@
 import React , {Component} from 'react';
 import './App.css';
 import Note from './Note/note'
+import NoteForm from './noteForm/NoteForm'
+
 
 class App extends   Component{
 
@@ -38,6 +40,7 @@ class App extends   Component{
         
          </div>
        <div className ="NoteFooter">
+         <NoteForm />
        </div>
       </div>
     );
