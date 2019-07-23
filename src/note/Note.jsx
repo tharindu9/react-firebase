@@ -10,19 +10,24 @@ class Note extends Component {
         super(props);
         this.noteContent = props.noteContent;
         this.noteId = props.noteId;
-
-        this.state = {
-        }
+        this.deleteNote = this.deleteNote.bind(this)
     }
 
-    addNoteContent(){
+    deleteNote(id){
+       if(window.confirm("are you sure to delete ?")){
+        this.props.removeNote(id);
+       }
         
     }
 
     render(props){
         return(
             <div className="noteContent">
-                <h1>{this.noteContent}</h1>
+            
+
+            <i onClick={()=> this.deleteNote(this.noteId)} className="fa fa-close CloseButton"></i>
+           
+                <h5> {this.noteContent}</h5>
             </div>
         )
     }

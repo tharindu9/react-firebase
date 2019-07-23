@@ -5,31 +5,62 @@ import Note from './note/Note'
 import NoteForm from './noteForm/NoteForm';
 import { Link } from 'react-router-dom'
 import User from './User';
-
-
-
-
+import firebase from 'firebase/app';
+import  'firebase/database';
+import {firebaseConfig} from './config/Config'
 
 class App extends   Component{
 
   constructor(props){
     super(props)
     this.state ={
-      notes : [
-        {id : 1 , noteContent : "note one"},
-        { id : 2, noteContent : "note two"},
-      ],
-      
+      notes : [], 
+    }  
+    
+    if (!firebase.apps.length){
+      this.app = firebase.initializeApp(firebaseConfig);
     }
+    this.db = this.app.database().ref().child('notes')
     this.addNote = this.addNote.bind(this);
+    this.removeNote = this.removeNote.bind(this);
   }
 
-  addNote(note){
-    const previuoseNote = this.state.notes;
-    previuoseNote.push({id : previuoseNote.length+1 , noteContent : note});
+componentWillMount(){
+  const previuoseNote = this.state.notes;
+  this.db.on('child_added' ,snap=>{
+    previuoseNote.push({
+      noteId : snap.key,
+      noteContent : snap.val().noteContent
+    })
     this.setState({
       notes : previuoseNote
     })
+  })
+
+  this.db.on('child_removed' ,snap =>{
+      for(var i = 0 ; i<previuoseNote.length ; i++){
+        if(previuoseNote[i].noteId == snap.key){
+          previuoseNote.splice(i,1)
+        }
+      }
+
+      this.setState({ 
+        notes : previuoseNote
+      })
+  })
+
+ 
+}
+
+  addNote(note){
+  this.db.push({
+    noteContent: note
+  })
+  }
+
+  removeNote(noteID){
+   // alert(noteID)
+   this.db.child(noteID).remove()
 
   }
   
@@ -38,14 +69,14 @@ class App extends   Component{
      
       <div className="NoteWapper">
 
-    <ul>
+    {/* <ul>
         <li>
           <Link to="/">To Do App</Link>
         </li>
         <li>
           <Link to="/users">Users</Link>
         </li>
-      </ul>
+      </ul> */}
         <div className = "NoteHeader">
           <div className = "NoteHeading">
             <h1>To do List</h1> 
@@ -56,10 +87,12 @@ class App extends   Component{
           </div>
         </div>
         <div className ="NoteBody" >
+     
           {
             this.state.notes.map((note) =>  {
               return (
-                <Note noteContent = {note.noteContent} noteId = {note.noteId} key = {note.id}/>
+                <Note noteContent = {note.noteContent} noteId = {note.noteId} key = {note.noteId}
+                removeNote = {this.removeNote}/>
               )
             }
             )
